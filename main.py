@@ -30,8 +30,8 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()
     amount = query.data
     qr_link = get_qr_link(amount)
-    await query.message.reply_text(f"Pay ₹{amount} via UPI:
-{qr_link}
+    await query.message.reply_text(f"Pay ₹{amount} via UPI:\nupi://pay?pa=jaanuragagan@fam&pn=Anurag&am={amount}&cu=INR")
+
 
 After successful payment, your access link:
 {GROUP_LINK}")
