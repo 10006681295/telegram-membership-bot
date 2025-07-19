@@ -33,7 +33,7 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.message.reply_text(f"Pay ₹{amount} via UPI:\nupi://pay?pa=jaanuragagan@fam&pn=Anurag&am={amount}&cu=INR")
 
 
-await query.message.reply_text(f"Pay ₹{amount} via UPI:\n{qr_link}\n\nAfter successful payment, your access link:\n{GROUP_LINK}")
+
 
 
 if __name__ == "__main__":
@@ -42,3 +42,12 @@ if __name__ == "__main__":
     app.add_handler(CallbackQueryHandler(button_callback))
     print("Bot started...")
     app.run_polling()
+@bot.callback_query_handler(func=lambda call: True)
+async def handle_callback_query(call):
+    amount = 199
+    qr_link = await generate_qr(amount)
+
+    await call.message.reply_text(
+        f"Pay ₹{amount} via UPI:\n{qr_link}\n\nAfter successful payment, your access link:\n{GROUP_LINK}"
+    )
+
