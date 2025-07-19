@@ -1,10 +1,10 @@
 import os
-from flask import Flask, request
+from flask import Flask
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
 import asyncio
+import threading
 
-# Bot Token and Group Link from environment variables
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 GROUP_LINK = os.getenv("GROUP_LINK")
 UPI_ID = os.getenv("UPI_ID")
@@ -33,26 +33,28 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"Pay ₹{amount} via UPI:\n{qr}\n\nAfter payment, you will receive the group link:\n{GROUP_LINK}"
     )
 
-# Flask App to keep Render port open
-app = Flask(__name__)
+# Flask server to keep Render alive
+flask_app = Flask(__name__)
 
-@app.route('/')
+@flask_app.route('/')
 def home():
     return "Bot is running!"
 
-async def run_bot():
-    application = ApplicationBuilder().token(BOT_TOKEN).build()
-    application.add_handler(CommandHandler("start", start))
-    application.add_handler(CallbackQueryHandler(button_callback))
-    print("Bot started...")
-    await application.run_polling()
+# Telegram Bot in separate thread
+def start_bot():
+    async def run():
+        app = ApplicationBuilder().token(BOT_TOKEN).build()
+        app.add_handler(CommandHandler("start", start))
+        app.add_handler(CallbackQueryHandler(button_callback))
+        print("Bot started...")
+        await app.run_polling()
 
-def start_async_loop():
-    loop = asyncio.get_event_loop()
-    loop.create_task(run_bot())
+    asyncio.run(run())
 
-if __name__ == "__main__":
-    start_async_loop()
-    app.run(host="0.0.0.0", port=10000)
+# Run both Flask and Bot
+if __name__ == '__main__':
+    threading.Thread(target=start_bot).start()
+    flask_app.run(host="0.0.0.0", port=10000)
+
 
 
