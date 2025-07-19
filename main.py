@@ -33,8 +33,8 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.message.reply_text(f"Pay ₹{amount} via UPI:\nupi://pay?pa=jaanuragagan@fam&pn=Anurag&am={amount}&cu=INR")
 
 
-After successful payment, your access link:
-{GROUP_LINK}")
+await query.message.reply_text(f"Pay ₹{amount} via UPI:\n{qr_link}\n\nAfter successful payment, your access link:\n{GROUP_LINK}")
+
 
 if __name__ == "__main__":
     app = ApplicationBuilder().token(BOT_TOKEN).build()
