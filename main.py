@@ -52,3 +52,14 @@ if __name__ == '__main__':
     telegram_app.add_handler(CommandHandler("start", start))
     telegram_app.add_handler(CallbackQueryHandler(button_callback))
     telegram_app.run_polling()
+    from flask import Flask
+import threading
+
+flask_app = Flask(__name__)
+
+@flask_app.route('/')
+def index():
+    return "Bot is running!"
+
+threading.Thread(target=lambda: flask_app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))).start()
+
